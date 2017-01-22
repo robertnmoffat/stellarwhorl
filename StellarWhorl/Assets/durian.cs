@@ -16,8 +16,8 @@ public class durian : MonoBehaviour {
 	void Update () {
 
         Vector3 difference = player.transform.position - transform.position;
-        difference = difference.normalized *666;
-        rb.AddForce(difference);
+        difference = difference.normalized;
+        rb.AddForce(difference * 420);
     }
 
 }
