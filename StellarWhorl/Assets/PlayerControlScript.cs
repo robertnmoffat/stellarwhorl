@@ -8,7 +8,12 @@ public class PlayerControlScript : MonoBehaviour {
 	public GameObject board;
 	public bool isGrounded = true;
 	public float maxVelocity = 10.0f;
+	public GameObject cameraObject;
 
+
+	public int CONCUSSION = 0;
+
+	int shotHeld=0;
 	Rigidbody rb;
 
 	// Use this for initialization
@@ -22,14 +27,51 @@ public class PlayerControlScript : MonoBehaviour {
 		rotateTowardsSlower (board.transform, transform);
 		//transform.rotation = Quaternion.Euler (transform.rotation.eulerAngles.x, board.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
 
-		if (Input.GetKey (KeyCode.UpArrow)&&getHighestVectorValue(rb.velocity)<=maxVelocity) {
-			rb.AddForce (board.transform.forward * thrustForce);
+		float velocity = getHighestVectorValue (rb.velocity);
+
+		if (velocity >= maxVelocity+2) {
+			float speedDiff = velocity - maxVelocity;
+			Vector3 scale = board.transform.localScale;
+			//board.transform.localScale = new Vector3 (scale.x, scale.y, 1+speedDiff);
+			Camera cam = cameraObject.GetComponent<Camera> ();
+			if (60 + speedDiff * 10 < 179)
+				cam.fieldOfView = 60 + speedDiff * 10;
+			else
+				cam.fieldOfView = 179;
+
+		}
+
+		if (Input.GetKey (KeyCode.UpArrow)) {
+			if (velocity <= maxVelocity)
+				rb.AddForce (board.transform.forward * thrustForce);
+			else {
+				float speedDiff = velocity - maxVelocity;
+				//rb.AddForce (board.transform.forward * (thrustForce-speedDiff));
+
+			}
 		}
 		if (Input.GetKey (KeyCode.LeftArrow)) {
 			board.transform.Rotate (0.0f, -rotationForce, 0.0f);
 		}
 		if (Input.GetKey (KeyCode.RightArrow)) {
 			board.transform.Rotate (0.0f, rotationForce, 0.0f);
+		}
+
+		if (Input.GetKey (KeyCode.Space)) {
+			shotHeld+=10;
+		}
+
+		if (Input.GetKeyUp (KeyCode.Space)) {
+			GameObject grenade = Instantiate (Resources.Load ("concussionGrenade"), 
+				new Vector3 (transform.position.x, transform.position.y+1, transform.position.z),
+				Quaternion.identity) as GameObject;
+			Rigidbody grb = grenade.GetComponent<Rigidbody> ();
+			grb.AddForce (transform.forward * shotHeld);
+			grb.AddForce (transform.up * shotHeld/2);
+			
+			//Instantiate (concussionOut, transform.position, Quaternion.identity);
+
+			shotHeld = 0;
 		}
 	}
 
@@ -64,13 +106,17 @@ public class PlayerControlScript : MonoBehaviour {
 
 	public float getHighestVectorValue(Vector3 vec){
 		float highest = 0;
-		if (vec.x > highest)
-			highest = vec.x;
-		if (vec.y > highest)
-			highest = vec.y;
-		if (vec.z > highest)
-			highest = vec.z;
+		if (Mathf.Abs(vec.x) > highest)
+			highest = Mathf.Abs(vec.x);
+		if (Mathf.Abs(vec.y) > highest)
+			highest = Mathf.Abs(vec.y);
+		if (Mathf.Abs(vec.z) > highest)
+			highest = Mathf.Abs(vec.z);
 
 		return highest;
-	}		
+	}	
+
+	public void shootGrenade(int grenadeType){
+		
+	}
 }
