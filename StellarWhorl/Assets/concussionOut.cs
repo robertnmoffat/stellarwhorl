@@ -36,7 +36,7 @@ public class concussionOut : MonoBehaviour {
     }
     void expand()
     {
-        sphere1.transform.localScale = new Vector3(sphere1.transform.localScale.x + 1f, sphere1.transform.localScale.y + 1f, sphere1.transform.localScale.z + 1f);
+        sphere1.transform.localScale = new Vector3(sphere1.transform.localScale.x + 2f, sphere1.transform.localScale.y + 2f, sphere1.transform.localScale.z + 2f);
         sphere2.transform.localScale = new Vector3(sphere1.transform.localScale.x * 0.66f, sphere1.transform.localScale.y * 0.66f, sphere1.transform.localScale.z * 0.66f);
         sphere3.transform.localScale = new Vector3(sphere1.transform.localScale.x * 0.33f, sphere1.transform.localScale.y * 0.33f, sphere1.transform.localScale.z * 0.33f);
     }

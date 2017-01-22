@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerControlScript : MonoBehaviour {
 	public float thrustForce = 10;
@@ -9,8 +10,19 @@ public class PlayerControlScript : MonoBehaviour {
 	public bool isGrounded = true;
 	public float maxVelocity = 10.0f;
 	public GameObject cameraObject;
+	public Text screenText;
+	public Text wetScreenText;
+	public Text greenText;
+	public Text wetScore;
+	public Text lapRecordText;
+	public Text speedScore;
+	public int lapRecord=200;
+	public BoardScript boardScript;
+	public int airTime = 0;
+	public int speedTime = 0;
+	public int greenPower = 0;
 
-
+	float textRotate = 0.0f;
 	public int CONCUSSION = 0;
 
 	int shotHeld=0;
@@ -31,8 +43,43 @@ public class PlayerControlScript : MonoBehaviour {
 
 		float velocity = getHighestVectorValue (rb.velocity);
 
+		if (greenPower > 20) {
+			greenText.enabled = true;
+			greenText.transform.Rotate (new Vector3 (0, 0, greenPower));
+		} else {
+			greenText.enabled = false;
+		}
+
+		if (!boardScript.isCollided) {
+			airTime++;
+			wetScore.enabled = true;
+			wetScore.text = "+"+airTime*airTime;
+			if(airTime*airTime>lapRecord){
+				lapRecordText.enabled = true;
+				lapRecord = airTime * airTime;
+			}
+			if (airTime > 10)
+				wetScreenText.enabled = true;
+			wetScreenText.transform.Rotate (new Vector3(0,0,airTime));
+		} else {
+			lapRecordText.enabled = false;
+			wetScore.enabled = false;
+			greenPower = 0;
+			airTime = 0;
+			wetScreenText.enabled = false;
+		}
+
 		if (velocity >= maxVelocity + 2) {
+			screenText.enabled = true;
+			speedTime++;
+			speedScore.enabled = true;
+			speedScore.text = "+"+speedTime*speedTime;
+
+			if (airTime > 10)
+				greenPower++;
+
 			float speedDiff = velocity - maxVelocity;
+			screenText.transform.Rotate (new Vector3(0,0,speedDiff*2));
 			Vector3 scale = board.transform.localScale;
 			//board.transform.localScale = new Vector3 (scale.x, scale.y, 1+speedDiff);
 
@@ -41,18 +88,54 @@ public class PlayerControlScript : MonoBehaviour {
 			else
 				cam.fieldOfView = 179;
 		} else {
+			speedScore.enabled = false;
+			speedTime = 0;
+			screenText.enabled = false;
 			cam.fieldOfView = 60;
-		}
+		}	
 
-		if (Input.GetKey (KeyCode.UpArrow)) {
-			if (velocity <= maxVelocity)
-				rb.AddForce (board.transform.forward * thrustForce);
-			else {
+
+
+		if (Input.GetKey (KeyCode.UpArrow)) {			
+			Vector3 tempForwardForce = board.transform.forward * thrustForce;
+			float tempx, tempy, tempz;
+			if (Mathf.Abs(rb.velocity.x) > maxVelocity)
+				tempx = 0;
+			else
+				tempx = tempForwardForce.x;
+
+			if (Mathf.Abs(rb.velocity.y) > maxVelocity)
+				tempy = 0;
+			else
+				tempy = tempForwardForce.y;
+
+			if (Mathf.Abs(rb.velocity.z) > maxVelocity)
+				tempz = 0;
+			else
+				tempz = tempForwardForce.z;
+
+			rb.AddForce (new Vector3(tempx, tempy, tempz));
+
+			if (velocity > maxVelocity){
 				float speedDiff = velocity - maxVelocity;
 				//rb.AddForce (board.transform.forward * (thrustForce-speedDiff));
-
 			}
 		}
+
+		//Carving crap
+		float totalVel = rb.velocity.x + rb.velocity.z;
+		float percentx = rb.velocity.x/totalVel;
+		float percentz = rb.velocity.z/totalVel;
+
+		float portionx = Mathf.Sin (transform.rotation.eulerAngles.y)*180/Mathf.PI;
+		float portiony = Mathf.Cos (transform.rotation.eulerAngles.y)*180/Mathf.PI;
+
+		print (portionx + portiony);
+
+		
+
+			
+
 		if (Input.GetKey (KeyCode.LeftArrow)) {
 			board.transform.Rotate (0.0f, -rotationForce, 0.0f);
 		}
@@ -65,11 +148,16 @@ public class PlayerControlScript : MonoBehaviour {
 		}
 
 		if (Input.GetKeyUp (KeyCode.Space)) {
-			print ("space");
 			Vector3 explodeDirection = -rb.velocity.normalized;
+
+			//GameObject grenade = Instantiate (Resources.Load ("concussionOut"), 
+			//	new Vector3 (transform.position.x, transform.position.y+0.1f, board.transform.position.z),
+			//	Quaternion.identity) as GameObject;
+			
 			GameObject grenade = Instantiate (Resources.Load ("concussionOut"), 
-				new Vector3 (transform.position.x, transform.position.y+0.5f, transform.position.z),
+				new Vector3 (transform.position.x-transform.forward.x*0.5f, transform.position.y+0.1f-transform.forward.y*0.5f, board.transform.position.z-transform.forward.z*0.5f),
 				Quaternion.identity) as GameObject;
+
 			//Rigidbody grb = grenade.GetComponent<Rigidbody> ();
 			//grb.AddForce (transform.forward * shotHeld);
 			//grb.AddForce (transform.up * -300);
@@ -80,6 +168,10 @@ public class PlayerControlScript : MonoBehaviour {
 			//Instantiate (concussionOut, transform.position, Quaternion.identity);
 
 			shotHeld = 0;
+		}
+
+		if (Input.GetKeyDown (KeyCode.LeftControl)&&boardScript.isCollided) {
+			rb.AddForce (board.transform.up*500);
 		}
 	}
 
