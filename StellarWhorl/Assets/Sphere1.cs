@@ -41,7 +41,7 @@ public class Sphere1 : MonoBehaviour {
         Vector3 difference = inserted.gameObject.transform.position - transform.position;
 		difference = difference.normalized;
         //difference = new Vector3(1/difference.x*50, 1/difference.y*50, 1/difference.z*50);
-		difference = new Vector3(difference.x*50, difference.y*50, difference.z*50);
+		difference = new Vector3(difference.x*150, difference.y*150, difference.z*150);
         //inserted.gameObject.transform.position = inserted.gameObject.transform.position + difference;
 		Rigidbody rb = inserted.transform.parent.GetComponent<Rigidbody>();
         rb.AddForce(difference);
