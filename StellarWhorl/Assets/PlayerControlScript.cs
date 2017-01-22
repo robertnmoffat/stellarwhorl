@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerControlScript : MonoBehaviour {
 	public float thrustForce = 10;
-	public float rotationForce = 2.0f;
+	public float rotationForce = 4.0f;
 	public GameObject board;
 	public bool isGrounded = true;
 	public float maxVelocity = 10.0f;
@@ -15,10 +15,12 @@ public class PlayerControlScript : MonoBehaviour {
 
 	int shotHeld=0;
 	Rigidbody rb;
+	Camera cam;
 
 	// Use this for initialization
 	void Start () {
 		rb = board.GetComponent<Rigidbody> ();
+		cam = cameraObject.GetComponent<Camera> ();
 	}
 
 	// Update is called once per frame
@@ -29,16 +31,17 @@ public class PlayerControlScript : MonoBehaviour {
 
 		float velocity = getHighestVectorValue (rb.velocity);
 
-		if (velocity >= maxVelocity+2) {
+		if (velocity >= maxVelocity + 2) {
 			float speedDiff = velocity - maxVelocity;
 			Vector3 scale = board.transform.localScale;
 			//board.transform.localScale = new Vector3 (scale.x, scale.y, 1+speedDiff);
-			Camera cam = cameraObject.GetComponent<Camera> ();
-			if (60 + speedDiff * 10 < 179)
-				cam.fieldOfView = 60 + speedDiff * 10;
+
+			if (60 + speedDiff*2 < 179)
+				cam.fieldOfView = 60 + speedDiff*3;
 			else
 				cam.fieldOfView = 179;
-
+		} else {
+			cam.fieldOfView = 60;
 		}
 
 		if (Input.GetKey (KeyCode.UpArrow)) {
@@ -62,12 +65,16 @@ public class PlayerControlScript : MonoBehaviour {
 		}
 
 		if (Input.GetKeyUp (KeyCode.Space)) {
-			GameObject grenade = Instantiate (Resources.Load ("concussionGrenade"), 
-				new Vector3 (transform.position.x, transform.position.y+1, transform.position.z),
+			Vector3 explodeDirection = -rb.velocity.normalized;
+			GameObject grenade = Instantiate (Resources.Load ("concussionOut"), 
+				new Vector3 (transform.position.x, transform.position.y+0.5f, transform.position.z),
 				Quaternion.identity) as GameObject;
-			Rigidbody grb = grenade.GetComponent<Rigidbody> ();
-			grb.AddForce (transform.forward * shotHeld);
-			grb.AddForce (transform.up * shotHeld/2);
+			//Rigidbody grb = grenade.GetComponent<Rigidbody> ();
+			//grb.AddForce (transform.forward * shotHeld);
+			//grb.AddForce (transform.up * -300);
+			//grb.AddForce (transform.up * shotHeld/2);
+
+
 			
 			//Instantiate (concussionOut, transform.position, Quaternion.identity);
 

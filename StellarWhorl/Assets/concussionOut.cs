@@ -7,7 +7,7 @@ public class concussionOut : MonoBehaviour {
     public GameObject sphere1;
     public GameObject sphere2;
     public GameObject sphere3;
-    const int DURATION = 125;
+    const int DURATION = 60;
     int lifetime = 0;
 
 	// Use this for initialization
@@ -36,14 +36,14 @@ public class concussionOut : MonoBehaviour {
     }
     void expand()
     {
-        sphere1.transform.localScale = new Vector3(sphere1.transform.localScale.x + 0.4f, sphere1.transform.localScale.y + 0.4f, sphere1.transform.localScale.z + 0.4f);
+        sphere1.transform.localScale = new Vector3(sphere1.transform.localScale.x + 1f, sphere1.transform.localScale.y + 1f, sphere1.transform.localScale.z + 1f);
         sphere2.transform.localScale = new Vector3(sphere1.transform.localScale.x * 0.66f, sphere1.transform.localScale.y * 0.66f, sphere1.transform.localScale.z * 0.66f);
         sphere3.transform.localScale = new Vector3(sphere1.transform.localScale.x * 0.33f, sphere1.transform.localScale.y * 0.33f, sphere1.transform.localScale.z * 0.33f);
     }
     void contract()
     {
         print("contracting");
-        sphere1.transform.localScale = new Vector3(sphere1.transform.localScale.x - 0.4f, sphere1.transform.localScale.y - 0.4f, sphere1.transform.localScale.z - 0.4f);
+        sphere1.transform.localScale = new Vector3(sphere1.transform.localScale.x - 1f, sphere1.transform.localScale.y - 1f, sphere1.transform.localScale.z - 1f);
         sphere2.transform.localScale = new Vector3(sphere1.transform.localScale.x * 0.66f, sphere1.transform.localScale.y * 0.66f, sphere1.transform.localScale.z * 0.66f);
         sphere3.transform.localScale = new Vector3(sphere1.transform.localScale.x * 0.33f, sphere1.transform.localScale.y * 0.33f, sphere1.transform.localScale.z * 0.33f);
     }
