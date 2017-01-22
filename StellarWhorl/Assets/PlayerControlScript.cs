@@ -65,6 +65,7 @@ public class PlayerControlScript : MonoBehaviour {
 		}
 
 		if (Input.GetKeyUp (KeyCode.Space)) {
+			print ("space");
 			Vector3 explodeDirection = -rb.velocity.normalized;
 			GameObject grenade = Instantiate (Resources.Load ("concussionOut"), 
 				new Vector3 (transform.position.x, transform.position.y+0.5f, transform.position.z),
