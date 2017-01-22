@@ -16,6 +16,7 @@ public class PlayerControlScript : MonoBehaviour {
 	public Text wetScore;
 	public Text lapRecordText;
 	public Text speedScore;
+	public Text combinedScoreText;
 	public int lapRecord=200;
 	public BoardScript boardScript;
 	public int airTime = 0;
@@ -94,7 +95,12 @@ public class PlayerControlScript : MonoBehaviour {
 			cam.fieldOfView = 60;
 		}	
 
-
+		if (speedTime > 0 && airTime > 0) {
+			combinedScoreText.enabled = true;
+			combinedScoreText.text = "+"+speedTime * speedTime * airTime * airTime+"!!!";
+		} else {
+			combinedScoreText.enabled = false;
+		}
 
 		if (Input.GetKey (KeyCode.UpArrow)) {			
 			Vector3 tempForwardForce = board.transform.forward * thrustForce;
