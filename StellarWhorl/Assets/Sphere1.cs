@@ -5,7 +5,6 @@ using UnityEngine;
 public class Sphere1 : MonoBehaviour {
 
     GameObject inserted = null;
-    public GameObject board;
 
 	// Use this for initialization
 	void Start () {
@@ -40,9 +39,11 @@ public class Sphere1 : MonoBehaviour {
     void puke()
     {
         Vector3 difference = inserted.gameObject.transform.position - transform.position;
-        difference = new Vector3(1/difference.x*50, 1/difference.y*50, 1/difference.z*50);
+		difference = difference.normalized;
+        //difference = new Vector3(1/difference.x*50, 1/difference.y*50, 1/difference.z*50);
+		difference = new Vector3(difference.x*50, difference.y*50, difference.z*50);
         //inserted.gameObject.transform.position = inserted.gameObject.transform.position + difference;
-        Rigidbody rb = board.GetComponent<Rigidbody>();
+		Rigidbody rb = inserted.transform.parent.GetComponent<Rigidbody>();
         rb.AddForce(difference);
     } 
 }
