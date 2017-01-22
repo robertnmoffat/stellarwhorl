@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerControlScript : MonoBehaviour {
 	public float thrustForce = 10;
@@ -9,8 +10,10 @@ public class PlayerControlScript : MonoBehaviour {
 	public bool isGrounded = true;
 	public float maxVelocity = 10.0f;
 	public GameObject cameraObject;
+	public Text screenText;
+	public Text wetScreenText;
 
-
+	float textRotate = 0.0f;
 	public int CONCUSSION = 0;
 
 	int shotHeld=0;
@@ -32,7 +35,11 @@ public class PlayerControlScript : MonoBehaviour {
 		float velocity = getHighestVectorValue (rb.velocity);
 
 		if (velocity >= maxVelocity + 2) {
+			screenText.enabled = true;
+			wetScreenText.enabled = true;
 			float speedDiff = velocity - maxVelocity;
+			screenText.transform.Rotate (new Vector3(0,0,speedDiff*2));
+			wetScreenText.transform.Rotate (new Vector3(0,0,speedDiff*2));
 			Vector3 scale = board.transform.localScale;
 			//board.transform.localScale = new Vector3 (scale.x, scale.y, 1+speedDiff);
 
@@ -41,8 +48,11 @@ public class PlayerControlScript : MonoBehaviour {
 			else
 				cam.fieldOfView = 179;
 		} else {
+			screenText.enabled = false;
+			wetScreenText.enabled = false;
 			cam.fieldOfView = 60;
 		}
+			
 
 		if (Input.GetKey (KeyCode.UpArrow)) {
 			if (velocity <= maxVelocity)
@@ -53,6 +63,15 @@ public class PlayerControlScript : MonoBehaviour {
 
 			}
 		}
+
+		//Carving crap
+		float totalVel = rb.velocity.x + rb.velocity.z;
+		float percentx = rb.velocity.x/totalVel;
+		float percentz = rb.velocity.z/totalVel;
+
+
+			
+
 		if (Input.GetKey (KeyCode.LeftArrow)) {
 			board.transform.Rotate (0.0f, -rotationForce, 0.0f);
 		}
@@ -65,7 +84,6 @@ public class PlayerControlScript : MonoBehaviour {
 		}
 
 		if (Input.GetKeyUp (KeyCode.Space)) {
-			print ("space");
 			Vector3 explodeDirection = -rb.velocity.normalized;
 			GameObject grenade = Instantiate (Resources.Load ("concussionOut"), 
 				new Vector3 (transform.position.x, transform.position.y+0.5f, transform.position.z),
