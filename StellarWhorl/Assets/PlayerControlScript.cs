@@ -85,7 +85,7 @@ public class PlayerControlScript : MonoBehaviour {
 			//board.transform.localScale = new Vector3 (scale.x, scale.y, 1+speedDiff);
 
 			if (60 + speedDiff*2 < 179)
-				cam.fieldOfView = 60 + speedDiff*3;
+				cam.fieldOfView = 60 + speedDiff*4;
 			else
 				cam.fieldOfView = 179;
 		} else {
